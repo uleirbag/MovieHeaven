@@ -24,3 +24,6 @@ logs
 
 # Environment variables
 .env*
+
+# Firebase private key
+firebase_config/*

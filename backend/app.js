@@ -21,3 +21,7 @@ app.get('/', (req, res) => {
 app.listen(port, () => {
   console.log(`Serverul ruleaza pe portul ${port}!`)
 });
+
+// Firebase
+const { db, auth } = require('../firebase_config/firebaseAdmin.js');
+
