@@ -14,9 +14,15 @@ app.use(cors())
 app.use(express.urlencoded({ extended: false }))
 app.use(express.json())
 
+// rute API
+const ruteApi = require('./routes/api');
+app.use('/api', ruteApi);
+
+
 app.get('/', (req, res) => {
   res.send('Server-ul Express a pornit cu succes :D')
 });
+
 
 app.listen(port, () => {
   console.log(`Serverul ruleaza pe portul ${port}!`)
