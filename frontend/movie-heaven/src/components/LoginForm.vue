@@ -18,23 +18,25 @@
   import { auth } from "C:/Users/Gabi/Desktop/Movie Heaven/firebase_config/firebaseClient.js";
   import { signInWithEmailAndPassword } from "firebase/auth";
   import { useRouter } from "vue-router";
-  
+  import { useStore } from "vuex";
+
   export default {
     setup() {
       const email = ref("");
       const password = ref("");
       const errorMessage = ref(null);
+      const store = useStore();
       const router = useRouter();
   
       const login = async () => {
         try {
-            await signInWithEmailAndPassword(auth, email.value, password.value);
+            await store.dispatch("login", { email: email.value, password: password.value });
             router.push({ name: "home" });
         } catch (error) {
-          errorMessage.value = "Combinație email / parolă incorectă!";
+            errorMessage.value = "Combinație email / parolă incorectă!";
         }
-      };
-  
+        };
+
       return { email, password, errorMessage, login };
     },
   };
@@ -100,4 +102,3 @@
     margin-top: 10px;
   }
 </style>
-  

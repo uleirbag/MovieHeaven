@@ -21,7 +21,7 @@
   import { ref } from 'vue';
   import { auth } from "C:/Users/Gabi/Desktop/Movie Heaven/firebase_config/firebaseClient.js";
   import { useRouter } from "vue-router"; 
-
+  import { useStore } from "vuex";
   
   export default {
   setup() {
@@ -30,6 +30,7 @@
     const confirmPassword = ref("");
     const errorMessage = ref(null);
     const router = useRouter();
+    const store = useStore();
 
     const register = async () => {
       if (password.value !== confirmPassword.value) {
@@ -38,7 +39,7 @@
       }
 
       try {
-        await auth.createUserWithEmailAndPassword(auth, email.value, password.value);
+        await store.dispatch("register", { email: email.value, password: password.value });
         router.push({ name: "home" });
       } catch (error) {
         errorMessage.value = error.message;
