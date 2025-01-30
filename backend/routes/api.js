@@ -1,16 +1,7 @@
 const express = require('express');
 const router = express.Router();
+const { db } = require('C:/Users/Gabi/Desktop/Movie Heaven/firebase_config/firebaseAdmin.js')
 
-// Rute useri
-router.post('/users/register', (req, res) => {
-  
-  res.send('Utilizatorul a fost inregistrat');
-});
-
-router.post('/users/login', (req, res) => {
-
-  res.send('Autentificare cu succes');
-});
 
 // Rute filme
 router.get('/filme', (req, res) => {
@@ -29,9 +20,32 @@ router.delete('/filme/:id', (req, res) => {
 });
 
 // Rute cinematografe
-router.get('/cinemauri', (req, res) => {
+router.get("/cinemauri", async (req, res) => {
+  try {
+    const snapshot = await db.collection("cinemas").get();
+    if (snapshot.empty) {
+      return res.status(404).json({ error: "Nu exista cinematografe in baza de date" });
+    }
+    const cinemas = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    res.json(cinemas);
+  } catch (error) {
+    console.error("Eroare backend:", error);
+    res.status(500).json({ error: "Eroare la preluarea cinematografelor din Firestore" });
+  }
+});
 
-  res.send('Lista cinematografelor');
+
+router.get("/cinemauri/:id", async (req, res) => {
+  try {
+    const cinemaRef = db.collection("cinemas").doc(req.params.id);
+    const doc = await cinemaRef.get();
+    if (!doc.exists) {
+      return res.status(404).json({ error: "Cinema-ul nu a fost gasit" });
+    }
+    res.json({ id: doc.id, ...doc.data() });
+  } catch (error) {
+    res.status(500).json({ error: "Eroare la preluarea cinema-ului" });
+  }
 });
 
 router.post('/cinemauri', (req, res) => {
