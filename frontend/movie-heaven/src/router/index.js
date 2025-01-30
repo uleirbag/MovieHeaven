@@ -3,6 +3,7 @@ import Homepage from '@/views/Homepage.vue'
 import Register from '@/views/Register.vue'
 import Login from '@/views/Login.vue'
 import CinemasView from '@/views/CinemasView.vue'
+import MoviesView from '@/views/MoviesView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -26,6 +27,11 @@ const router = createRouter({
       path: '/cinemas',
       name: 'cinemas',
       component: CinemasView,
+    },
+    {
+      path: '/movies',
+      name: 'movies',
+      component: MoviesView,
     },
     {
       path: '/about',

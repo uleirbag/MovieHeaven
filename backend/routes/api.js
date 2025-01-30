@@ -4,9 +4,18 @@ const { db } = require('C:/Users/Gabi/Desktop/Movie Heaven/firebase_config/fireb
 
 
 // Rute filme
-router.get('/filme', (req, res) => {
-
-  res.send('Lista filmelor');
+router.get('/filme', async (req, res) => {
+  try {
+    const snapshot = await db.collection("movies").get();
+    if (snapshot.empty) {
+      return res.status(404).json({ error: "Nu exista filme in baza de date" });
+    }
+    const movies = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    res.json(movies);
+  } catch (error) {
+    console.error("Eroare backend:", error);
+    res.status(500).json({ error: "Eroare la preluarea filmelor din Firestore" });
+  }
 });
 
 router.post('/filme', (req, res) => {
