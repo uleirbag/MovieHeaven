@@ -59,4 +59,23 @@ router.get("/cinemauri/:id", async (req, res) => {
   }
 });
 
+// Ruta program filme
+router.get('/program/:movieId', async (req, res) => {
+  try {
+    const { movieId } = req.params;
+    const snapshot = await db.collection("schedule").where("movieId", "==", movieId).get();
+
+    if (snapshot.empty) {
+      return res.status(404).json({ error: "Nu exista program disponibil pentru acest film" });
+    }
+
+    const schedule = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    res.json(schedule);
+  } catch (error) {
+    console.error("Eroare backend:", error);
+    res.status(500).json({ error: "Eroare la preluarea programului filmului din Firestore" });
+  }
+});
+
+
 module.exports = router;

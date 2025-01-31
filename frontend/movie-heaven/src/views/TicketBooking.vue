@@ -15,7 +15,14 @@
     <div v-else>
       <div v-if="loading">Se încarcă detaliile filmului...</div>
       <div v-else-if="errorMessage">{{ errorMessage }}</div>
-      <MovieDetails v-else :movie="movie" />
+      
+      <div v-else class="content-container">
+        <div class="details-and-reservation">
+          <MovieDetails v-if="movie" :movie="movie" />
+          <Reservation v-if="movie" :movieId="movie.id" class="reservation-box" />
+        </div>
+      </div>
+
     </div>
   </div>
 </template>
@@ -24,7 +31,9 @@
   import { ref, onMounted, computed } from "vue";
   import { useRoute, useRouter } from "vue-router";
   import { useStore } from "vuex";
-  import MovieDetails from "@/components/MovieDetails.vue"; // ✅ Importăm componenta nouă
+  import MovieDetails from "@/components/MovieDetails.vue";
+  import Reservation from "@/components/Reservation.vue";
+
 
   const store = useStore();
   const route = useRoute();
@@ -98,12 +107,38 @@ _/    _/    _/    _/_/        _/      _/    _/_/_/      _/    _/    _/_/_/    _/
   .movie-details-container {
     display: flex;
     flex-direction: column;
-    align-items: center;
+    align-items:start;
     padding: 40px;
     color: #fff;
     background-color: #121212;
     min-height: 100vh;
+    margin-left: 40px;
   }
+
+  .content-container {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+
+.details-and-reservation {
+  display: flex;
+  flex-direction: column; 
+  align-items: flex-start; 
+  max-width: 800px;
+  width: 100%;
+  gap: 20px; 
+}
+
+.details-and-reservation > * {
+  width: 100%;
+}
+
+.reservation-box {
+  width: 100%;
+  margin-top: 20px; 
+  margin-right: 35%;
+}
 
   .no-access {
   text-align: center;

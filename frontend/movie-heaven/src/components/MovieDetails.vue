@@ -12,9 +12,6 @@
         <p><strong>Limba:</strong> {{ movie.language }}</p>
         <p><strong>Actori principali:</strong> {{ movie.actors.join(", ") }}</p>
         <p><strong>Descriere:</strong> {{ movie.description }}</p>
-  
-        <button class="reserve-button">Continuă cu rezervarea</button>
-        <RouterLink to="/movies" class="back-button">Înapoi la filme</RouterLink>
       </div>
     </div>
   </template>
