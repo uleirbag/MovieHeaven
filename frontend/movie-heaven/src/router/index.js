@@ -4,6 +4,7 @@ import Register from '@/views/Register.vue'
 import Login from '@/views/Login.vue'
 import CinemasView from '@/views/CinemasView.vue'
 import MoviesView from '@/views/MoviesView.vue'
+import TicketBooking from '@/views/TicketBooking.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -32,6 +33,11 @@ const router = createRouter({
       path: '/movies',
       name: 'movies',
       component: MoviesView,
+    },
+    {
+      path: '/movies/:id',
+      name: 'bookTickets',
+      component: TicketBooking,
     },
     {
       path: '/about',

@@ -5,7 +5,7 @@
       <div class="hero-content">
         <h1>Movie Heaven - Magia filmelor începe aici ❣</h1>
         <p>Rezervă-ți locul pentru filmele preferate și vizionează-le în cinematografele din toată țara!</p>
-        <button @click="goToServices" class="buton">Începe acum</button>
+        <button @click="goToMovies" class="buton">Începe acum</button>
       </div>
     </header>
 
@@ -54,29 +54,30 @@
 </template>
   
 <script>
-import { ref } from "vue";
+    import { ref } from "vue";
+    import { useRouter } from "vue-router";
+    export default {
+      setup() {
+        const services = ref([
+          { title: 'Rezervare rapidă', description: 'Obține biletele cât ai zice motor... acțiune!' },
+          { title: 'Cinema bar', description: 'Cel mai bun Popcorn și o gamă extinsă de gustări și băuturi răcoritoare' },
+          { title: 'Plăți sigure', description: 'Rapid, online, fară griji!' },
+        ]);
 
-export default {
-  setup() {
-    const services = ref([
-      { title: 'Rezervare rapidă', description: 'Obține biletele cât ai zice motor... acțiune!' },
-      { title: 'Cinema bar', description: 'Cel mai bun Popcorn și o gamă extinsă de gustări și băuturi răcoritoare' },
-      { title: 'Plăți sigure', description: 'Rapid, online, fară griji!' },
-    ]);
+        const router = useRouter();
+        const goToMovies = () => {
+          router.push("/movies");
+        };
 
-    const goToServices = () => {
-      alert('Vezi mai multe servicii!');
+        return {
+          services,
+          goToMovies,
+        };
+      },
     };
-
-    return {
-      services,
-      goToServices,
-    };
-  },
-};
 </script>
 
-  <style scoped>
+<style scoped>
 
   body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -224,5 +225,5 @@ export default {
   .footer p {
     font-size: 0.9rem;
   }
-  </style>
+</style>
   

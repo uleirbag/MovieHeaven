@@ -16,15 +16,16 @@
 </template>
   
 <script setup>
+import { useRouter } from "vue-router";
 
+  const router = useRouter();
   const props = defineProps({
     movie: Object,
   });
   
   const reserveTickets = () => {
-    alert(`Rezerva bilete pentru filmul: ${props.movie.title}`);
+  router.push(`/movies/${props.movie.id}`);
   };
-
 </script>
   
 <style scoped>
