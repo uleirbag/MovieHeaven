@@ -1,5 +1,8 @@
 <template>
+
   <div class="movie-details-container">
+
+    <!-- In cazul in care utilizatorul nu este autentificat in cont -->
     <div v-if="!isAuthenticated" class="no-access">
       <p>Pagina de rezervare a biletelor este disponibilă exclusiv membrilor înregistrați!</p>
       <p>Vă rugăm să vă autentificați sau să va creați un cont nou pentru a beneficia de toate funcțiile platformei.</p>
@@ -11,7 +14,8 @@
         <pre><code>{{ asciiArt3 }}</code></pre>
       </div>
     </div>
-
+    
+    <!-- Pagina obisnuita, pentru utilizatori autentificati -->
     <div v-else>
       <div v-if="loading">Se încarcă detaliile filmului...</div>
       <div v-else-if="errorMessage">{{ errorMessage }}</div>
@@ -121,24 +125,23 @@ _/    _/    _/    _/_/        _/      _/    _/_/_/      _/    _/    _/_/_/    _/
   width: 100%;
 }
 
-.details-and-reservation {
-  display: flex;
-  flex-direction: column; 
-  align-items: flex-start; 
-  max-width: 800px;
-  width: 100%;
-  gap: 20px; 
-}
+  .details-and-reservation {
+    display: flex;
+    flex-direction: column; 
+    align-items: flex-start; 
+    width: 100%;
+    gap: 20px; 
+  }
 
-.details-and-reservation > * {
-  width: 100%;
-}
+  .details-and-reservation > * {
+    width: 100%;
+  }
 
-.reservation-box {
-  width: 100%;
-  margin-top: 20px; 
-  margin-right: 35%;
-}
+  .reservation-box {
+    width: 100%;
+    margin-top: 20px; 
+    margin-right: 35%;
+  }
 
   .no-access {
   text-align: center;
@@ -205,14 +208,14 @@ _/    _/    _/    _/_/        _/      _/    _/_/_/      _/    _/    _/_/_/    _/
   }
 }
 
-@media (max-width: 480px) {
-  .no-access {
-    font-size: 0.9rem;
-  }
+  @media (max-width: 480px) {
+    .no-access {
+      font-size: 0.9rem;
+    }
 
-  .register-button {
-    font-size: 0.9rem;
-    padding: 8px 12px;
-  }
+    .register-button {
+      font-size: 0.9rem;
+      padding: 8px 12px;
+    }
 }
 </style>

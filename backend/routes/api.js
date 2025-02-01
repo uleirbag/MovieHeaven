@@ -77,5 +77,41 @@ router.get('/program/:movieId', async (req, res) => {
   }
 });
 
+// Ruta obtinere locuri 
+router.get('/locuri/:movieId/:city/:date/:time', async (req, res) => {
+  try {
+    const { movieId, city, date, time } = req.params;
+    const snapshot = await db.collection("schedule").where("movieId", "==", movieId).get();
+
+    if (snapshot.empty) {
+      return res.status(404).json({ error: "Nu există program pentru acest film" });
+    }
+
+    let seats = null;
+    snapshot.docs.forEach(doc => {
+      const schedule = doc.data().schedule;
+      if (schedule[city] && schedule[city][date]) {
+        const movieSchedule = schedule[city][date].find(show => show.time === time);
+        if (movieSchedule) {
+          seats = movieSchedule;
+        }
+      }
+    });
+
+    if (!seats) {
+      return res.status(404).json({ error: "Nu exista program pentru acest film la ora selectata" });
+    }
+
+    res.json({
+      totalSeats: seats.totalSeats,
+      occupiedSeats: seats.occupiedSeats || [],
+      freeSeats: seats.freeSeats || []
+    });
+
+  } catch (error) {
+    console.error("Eroare backend:", error);
+    res.status(500).json({ error: "Eroare la preluarea locurilor" });
+  }
+});
 
 module.exports = router;
