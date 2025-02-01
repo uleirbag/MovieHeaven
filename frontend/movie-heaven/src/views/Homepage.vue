@@ -61,7 +61,7 @@
         const services = ref([
           { title: 'Rezervare rapidă', description: 'Obține biletele cât ai zice motor... acțiune!' },
           { title: 'Cinema bar', description: 'Cel mai bun Popcorn și o gamă extinsă de gustări și băuturi răcoritoare' },
-          { title: 'Plăți sigure', description: 'Rapid, online, fară griji!' },
+          { title: 'Prețuri accesibile', description: 'Orice bilet la film - doar 20 de lei (Standard/3D/IMAX)' },
         ]);
 
         const router = useRouter();

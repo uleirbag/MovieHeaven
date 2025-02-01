@@ -4,7 +4,11 @@
       <a @click="navigate('home')" class="navbar-brand">Movie Heaven</a>
     </div>
 
-    <div class="navbar-center">
+    <div class="mobileMenu" @click="toggleMenu">
+      ☰
+    </div>
+
+    <div class="navbar-center" :class="{ 'menu-open': menuOpen }">
       <ul class="navbar-menu">
         <li v-for="item in menuItems" :key="item.route" @click="navigate(item.route)">
           {{ item.label }}
@@ -12,7 +16,7 @@
       </ul>
     </div>
 
-    <div class="navbar-right">
+    <div class="navbar-right" :class="{ 'menu-open': menuOpen }">
       <ul class="auth-menu" v-if="!user">
         <li v-for="auth in authItems" :key="auth.route" @click="navigate(auth.route)">
           {{ auth.label }}
@@ -28,7 +32,7 @@
 </template>
 
 <script>
-import { computed } from "vue";
+import { computed, ref } from "vue";
 import { useRouter } from "vue-router";
 import { useStore } from "vuex";
 
@@ -36,12 +40,12 @@ export default {
   setup() {
     const router = useRouter();
     const store = useStore();
+    const menuOpen = ref(false);
 
     const menuItems = [
-      { label: "Rezervă", route: "tickets" },
       { label: "Filme", route: "movies" },
       { label: "Cinematografe", route: "cinemas" },
-      { label: "Despre noi", route: "about" },
+      { label: "Rezervările mele", route: "tickets" },
     ];
 
     const authItems = [
@@ -53,10 +57,12 @@ export default {
 
     const navigate = (routeName) => {
       router.push({ name: routeName });
+      menuOpen.value = false;
     };
 
     const logout = () => {
       store.dispatch("logout");
+      menuOpen.value = false;
     };
 
     const getUserName = (email) => {
@@ -64,7 +70,11 @@ export default {
       return name.charAt(0).toUpperCase() + name.slice(1);
     };
 
-    return { menuItems, authItems, navigate, user, logout, getUserName };
+    const toggleMenu = () => {
+      menuOpen.value = !menuOpen.value;
+    };
+
+    return { menuItems, authItems, navigate, user, logout, getUserName, menuOpen, toggleMenu };
   },
 };
 </script>
@@ -88,6 +98,14 @@ export default {
     color: #ffdd57;
     text-decoration: none;
     cursor: pointer;
+  }
+
+  .mobileMenu {
+    display: none;
+    font-size: 1.8rem;
+    cursor: pointer;
+    color: white;
+    max-height: 30%;
   }
 
   .navbar-center {
@@ -149,5 +167,49 @@ export default {
   .logout-button:hover {
     background-color: #ffcc33;
     transform: scale(1.05);
+  }
+
+  @media screen and (max-width: 768px) {
+    .mobileMenu {
+      display: block;
+    }
+
+    .navbar {
+      flex-direction: row;
+      align-items: center;
+      padding: 1rem;
+    }
+
+    .navbar-center,
+    .navbar-right {
+      position: absolute;
+      top: 60px;
+      left: 0;
+      width: 100%;
+      background-color: #1a1a1a;
+      flex-direction: column;
+      align-items: center;
+      display: none;
+    }
+
+    .navbar-center.menu-open,
+    .navbar-right.menu-open {
+      display: flex;
+    }
+
+    .navbar-menu,
+    .auth-menu {
+      margin-top: 10%;
+      flex-direction: column;
+      text-align: center;
+      
+    }
+
+    .navbar-menu li,
+    .auth-menu li {
+    
+      font-size: 1.2rem;
+      margin-bottom: 20px;
+    }
   }
 </style>

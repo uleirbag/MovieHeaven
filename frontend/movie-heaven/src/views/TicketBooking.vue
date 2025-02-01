@@ -141,6 +141,7 @@ _/    _/    _/    _/_/        _/      _/    _/_/_/      _/    _/    _/_/_/    _/
     width: 100%;
     margin-top: 20px; 
     margin-right: 35%;
+    background-color: #121212;
   }
 
   .no-access {

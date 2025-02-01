@@ -1,7 +1,8 @@
 <template>
 
     <div v-if="seats.length" class="seats-container">
-      <h3>Alege locurile:</h3>
+      <h2 style="text-align: left;">Alege locurile:</h2>
+      <h2>-----------ECRAN CINEMA-----------</h2>
       <div class="seats-grid">
         <div 
           v-for="seat in seats" 
