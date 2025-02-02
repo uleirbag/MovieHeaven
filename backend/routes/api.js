@@ -114,4 +114,17 @@ router.get('/locuri/:movieId/:city/:date/:time', async (req, res) => {
   }
 });
 
+// Ruta POST rezervare
+router.post('/tickets', async (req, res) => {
+  try {
+    const reservation = req.body; 
+    const docRef = await db.collection("ticketReservation").add(reservation);
+    res.status(201).json({ id: docRef.id, ...reservation });
+
+  } catch (error) {
+    console.error("Eroare la inregistrarea rezervarii:", error);
+    res.status(500).json({ error: "Eroare la inregistrarea rezervarii" });
+  }
+});
+
 module.exports = router;

@@ -30,6 +30,9 @@
 
 <script setup>
   import { ref, reactive } from 'vue';
+  import { defineEmits } from 'vue';
+
+  const emit = defineEmits(['updateCinemaBarOrder']);
   
   const maxQuantity = 10; 
   
@@ -93,6 +96,7 @@
       }
     }
     console.log('Ati comandat de la Cinema Bar:', orderSummary);
+    emit('updateCinemaBarOrder', orderSummary);
   };
   </script>
   

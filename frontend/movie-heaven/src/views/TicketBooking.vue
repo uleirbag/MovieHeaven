@@ -22,21 +22,31 @@
       <div v-else>
         <div class="content-container">
           <div class="details-and-reservation">
+   
             <MovieDetails v-if="movie" :movie="movie" />
-            <Reservation v-if="movie" :movieId="movie.id" class="reservation-box" />
+            <Reservation v-if="movie" :movieId="movie.id" class="reservation-box"  @updateReservation="updateReservationData" />
+          
           </div>
         </div>
 
-        <!-- Toggle meniu cinema bar -->
+        <ModalWindow v-if="showModal" :message="modalMessage" @close="closeModal" />
+
+        <!-- Toggle CinemaBar -->
         <div class="cinema-bar-toggle">
           <p>Ce spui de o gustare la film?</p>
           <button class="toggle-button" @click="toggleCinemaBar">
             {{ cinemaBarVisible ? "Ascunde meniu" : "Afișează meniu" }}
           </button>
         </div>
-
         <div v-if="cinemaBarVisible">
-          <CinemaBar class="cinema-bar" />
+          <CinemaBar class="cinema-bar" @updateCinemaBarOrder="updateCinemaBarOrder" />
+        </div>
+
+        <!-- Buton confirmare rezervare -->
+        <div class="confirm-container">
+          <button class="confirm-button" @click="confirmReservation">
+            Finalizează rezervarea
+          </button>
         </div>
 
       </div>
@@ -48,9 +58,11 @@
 import { ref, onMounted, computed } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useStore } from "vuex";
+
 import MovieDetails from "@/components/MovieDetails.vue";
 import Reservation from "@/components/Reservation.vue";
-import CinemaBar from '@/components/CinemaBar.vue';
+import CinemaBar from "@/components/CinemaBar.vue";
+import ModalWindow from "@/components/ModalWindow.vue";
 
 const store = useStore();
 const route = useRoute();
@@ -58,6 +70,25 @@ const router = useRouter();
 const movie = ref(null);
 const loading = ref(true);
 const errorMessage = ref("");
+
+// variabilele pentru datele rezervarii provenite din componentele Reservation si CinemaBar
+const reservationData = ref({
+  location: "",
+  date: "",
+  time: "",
+  ticketCount: 0,
+  selectedSeats: []
+});
+const cinemaBarOrder = ref({});
+
+// evenimente de update primite din componentele child
+const updateReservationData = (data) => {
+  reservationData.value = data;
+};
+
+const updateCinemaBarOrder = (data) => {
+  cinemaBarOrder.value = data;
+};
 
 const isAuthenticated = computed(() => store.getters.isAuthenticated);
 
@@ -83,11 +114,55 @@ const goToRegister = () => {
   router.push("/register");
 };
 
+const cinemaBarVisible = ref(false);
 const toggleCinemaBar = () => {
   cinemaBarVisible.value = !cinemaBarVisible.value;
 };
 
-const cinemaBarVisible = ref(false);
+const showModal = ref(false);
+const modalMessage = ref('');
+const closeModal = () => {
+  showModal.value = false;
+};
+
+const confirmReservation = async () => {
+
+  if (!reservationData.value.selectedSeats || reservationData.value.selectedSeats.length === 0) {
+
+    modalMessage.value = `Nu puteți confirma rezervarea până nu vă alegeți locurile!`;
+    showModal.value = true;
+    return;
+  }
+
+  const reservation = {
+    movieId: movie.value.id,
+    movieTitle: movie.value.title,
+    reservationDetails: reservationData.value,
+    cinemaBarOrder: cinemaBarOrder.value,
+    timestamp: new Date()
+  };
+
+  try {
+    const response = await fetch("http://localhost:5000/api/tickets", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(reservation)
+    });
+    if (!response.ok) {
+      throw new Error("Eroare la trimiterea rezervării");
+    }
+    
+    const result = await response.json();
+    console.log("Rezervare inregistrata cu succes:", result);
+    router.push('/tickets');
+  
+  } catch (e) {
+    console.error("Eroare la trimiterea rezervarii:", e);
+    errorMessage.value = "Eroare la trimiterea rezervarii";
+  }
+};
 
 const asciiArt = `
 
@@ -113,9 +188,7 @@ const asciiArt2 = `
 
 `;
 
-const asciiArt3 = `
-
-                                                                                                                       
+const asciiArt3 = `                                                                                                    
                                         _/                _/                                                           
  _/_/_/  _/_/      _/_/    _/      _/        _/_/        _/_/_/      _/_/      _/_/_/  _/      _/    _/_/    _/_/_/    
 _/    _/    _/  _/    _/  _/      _/  _/  _/_/_/_/      _/    _/  _/_/_/_/  _/    _/  _/      _/  _/_/_/_/  _/    _/   
@@ -171,9 +244,9 @@ _/    _/    _/    _/_/        _/      _/    _/_/_/      _/    _/    _/_/_/    _/
     margin-top: 20px;
     text-align: center;
     display: flex;
-    flex-direction:row;
-    gap:30px;
-    max-width: fit-content;
+    flex-direction: column;
+    align-items: center;
+    max-width: 63%;
   }
 
   .cinema-bar-toggle p {
@@ -252,5 +325,29 @@ _/    _/    _/    _/_/        _/      _/    _/_/_/      _/    _/    _/_/_/    _/
   .cinema-bar {
     margin-right: 35%;
     max-width: fit-content;
+  }
+
+  .confirm-container {
+    margin-top: 30px;
+    width: 100%;
+    text-align: center;
+    margin-left: -17%;
+  }
+
+  .confirm-button {
+    padding: 12px 24px;
+    background-color: #ffdd57;
+    color: #1e1e1e;
+    border: none;
+    border-radius: 8px;
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    width: 68%;
+    font-weight: bold;
+  }
+
+  .confirm-button:hover {
+    background-color: #ffd027;
   }
 </style>

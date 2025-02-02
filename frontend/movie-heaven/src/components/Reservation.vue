@@ -52,9 +52,12 @@
 </template>
 
 <script setup>
-  import { ref, onMounted } from "vue";
+  import { ref, onMounted, watch } from "vue";
   import { useRoute } from "vue-router";
   import SeatSelector from "@/components/SeatSelector.vue";
+  import { defineEmits } from 'vue';
+
+  const emit = defineEmits(['updateReservation']);
 
   const route = useRoute();
   const schedules = ref({});
@@ -131,16 +134,29 @@
   const resetSeatSelection = () => {
     selectedSeats.value = [];
   };
+
+watch(
+  [selectedLocation, selectedDate, selectedTime, ticketCount, selectedSeats],
+  () => {
+    emit('updateReservation', {
+      location: selectedLocation.value,
+      date: selectedDate.value,
+      time: selectedTime.value,
+      ticketCount: ticketCount.value,
+      selectedSeats: selectedSeats.value
+    });
+  },
+  { deep: true }
+);
 </script>
 
 <style scoped>
-
   .reservation-wrapper {
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
     padding: 20px;
-    background-color: #111; 
+    background-color: #111;
     color: white;
     border-radius: 10px;
     width: 90%;
@@ -148,7 +164,6 @@
     margin: auto;
     gap: 20px;
   }
-
 
   .reservation-form {
     flex: 0 0 40%;
