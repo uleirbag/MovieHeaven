@@ -15,10 +15,16 @@
       </div>
     </div>
 
+        <ModalWindow 
+        v-if="showModal" 
+        :message="modalMessage" 
+        @close="closeModal" />
+        
 </template>
   
 <script setup>
-  import { defineProps, defineEmits } from 'vue';
+  import { defineProps, defineEmits, ref } from 'vue';
+  import ModalWindow from "@/components/ModalWindow.vue";
   
   const props = defineProps({
     seats: {
@@ -36,18 +42,24 @@
   });
   
   const emit = defineEmits(['update:selectedSeats']);
+
+  // Reactive variables for modal
+  const showModal = ref(false);
+  const modalMessage = ref('');
+
   
   const handleSeatClick = (seat) => {
     if (seat.occupied) return;
   
     const alreadySelected = props.selectedSeats.includes(seat.number);
 
-    // Previne utilizatorul sa aleaga mai multe locuri decat a pus in formular
+    // afisam fereastra de eroare daca user-ul incearca sa aleaga mai multe bilete decat a selectat
     if (!alreadySelected && props.selectedSeats.length >= props.maxTickets) {
-      alert(`Nu puteți selecta mai mult de ${props.maxTickets} locuri!`);
+      modalMessage.value = `Nu puteți selecta mai mult de ${props.maxTickets} ${props.maxTickets === 1 ? 'loc' : 'locuri'}!`;
+      showModal.value = true;
       return;
     }
-  
+
     let updatedSeats;
     if (alreadySelected) {
       updatedSeats = props.selectedSeats.filter(num => num !== seat.number);
@@ -56,7 +68,11 @@
     }
     emit('update:selectedSeats', updatedSeats);
   };
-  </script>
+
+  const closeModal = () => {
+  showModal.value = false;
+};
+</script>
   
 <style scoped>
   .seats-container {
@@ -95,4 +111,3 @@
     color: black;
   }
 </style>
-  
