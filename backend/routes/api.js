@@ -144,4 +144,18 @@ router.get('/tickets/:userId', async (req, res) => {
   }
 });
 
+// Ruta stergere rezervare
+router.delete('/tickets/:ticketId', async (req, res) => {
+  try {
+    const { ticketId } = req.params;
+
+    await db.collection("ticketReservation").doc(ticketId).delete();
+    res.json({ message: "Rezervarea a fost stearsa cu succes" });
+  }
+   catch (error) {
+    console.error("Eroare la stergerea rezervarii:", error);
+    res.status(500).json({ error: "Eroare la stergerea rezervarii" });
+  }
+});
+
 module.exports = router;

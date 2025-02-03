@@ -19,35 +19,25 @@
 </template>
 
 <script setup>
-
 import { ref, onMounted } from "vue";
 import Order from "@/components/Order.vue";
-import { getAuth } from "firebase/auth";
+import { getAuth, onAuthStateChanged } from "firebase/auth";
 
 const reservations = ref([]);
 const isLoading = ref(true);
 const error = ref(null);
+const currentUserId = ref(null);
 
-const auth = getAuth();
-const currentUser = auth.currentUser;
-
-const fetchReservations = async () => {
+const fetchReservations = async (userId) => {
   isLoading.value = true;
   try {
-
-    const userId = currentUser ? currentUser.uid : null;
-
-    if (!userId) {
-      throw new Error("Această pagină este doar pentru utilizatorii autentificați!");
-    }
-
+    // Apel către backend pentru a prelua rezervările utilizatorului curent
     const response = await fetch(`http://localhost:5000/api/tickets/${userId}`);
     if (!response.ok) {
-      throw new Error("Eroare la preluarea rezervărilor.");
+      throw new Error("Momentan nu ați realizat nicio rezervare. Va așteptăm să explorați oferta noastră!");
     }
     const data = await response.json();
     reservations.value = data;
-
   } catch (err) {
     console.error(err);
     error.value = err.message || "Eroare la încărcarea rezervărilor.";
@@ -56,10 +46,18 @@ const fetchReservations = async () => {
   }
 };
 
+const auth = getAuth();
 onMounted(() => {
-  fetchReservations();
+  onAuthStateChanged(auth, (user) => {
+    if (user) {
+      currentUserId.value = user.uid;
+      fetchReservations(user.uid);
+    } else {
+      error.value = "Această pagină este doar pentru utilizatorii autentificați!";
+      isLoading.value = false;
+    }
+  });
 });
-
 </script>
 
 <style scoped>
