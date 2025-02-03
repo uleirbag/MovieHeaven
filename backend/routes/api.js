@@ -127,4 +127,21 @@ router.post('/tickets', async (req, res) => {
   }
 });
 
+// Ruta GET rezervari utilizator
+router.get('/tickets/:userId', async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const snapshot = await db.collection("ticketReservation").where("userId", "==", userId).get();
+   
+    if (snapshot.empty) {
+      return res.status(404).json({ error: "Nu exista rezervari efectuate de acest utilizator" });  
+    }
+    const reservations = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    res.json(reservations);
+  } catch (error) {
+    console.error("Eroare la preluarea rezervarilor:", error);
+    res.status(500).json({ error: "Eroare la preluarea rezervarilor" });
+  }
+});
+
 module.exports = router;

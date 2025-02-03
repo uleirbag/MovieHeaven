@@ -58,6 +58,7 @@
 import { ref, onMounted, computed } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useStore } from "vuex";
+import { getAuth } from "firebase/auth";
 
 import MovieDetails from "@/components/MovieDetails.vue";
 import Reservation from "@/components/Reservation.vue";
@@ -70,6 +71,12 @@ const router = useRouter();
 const movie = ref(null);
 const loading = ref(true);
 const errorMessage = ref("");
+const auth = getAuth();
+
+const currentUser = auth.currentUser;
+const userId = currentUser ? currentUser.uid : null;
+const userEmail = currentUser ? currentUser.email : null;
+
 
 // variabilele pentru datele rezervarii provenite din componentele Reservation si CinemaBar
 const reservationData = ref({
@@ -139,7 +146,9 @@ const confirmReservation = async () => {
     movieTitle: movie.value.title,
     reservationDetails: reservationData.value,
     cinemaBarOrder: cinemaBarOrder.value,
-    timestamp: new Date()
+    timestamp: new Date(),
+    userId,      
+    userEmail
   };
 
   try {
