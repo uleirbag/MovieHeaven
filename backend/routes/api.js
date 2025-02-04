@@ -158,4 +158,53 @@ router.delete('/tickets/:ticketId', async (req, res) => {
   }
 });
 
+// Ruta PUT pentru actualizarea locurilor libere
+router.put('/schedule/updateSeats/:movieId', async (req, res) => {
+  try {
+    const { movieId } = req.params;
+    const { city, date, time, selectedSeats } = req.body;
+    if (!city || !date || !time || !selectedSeats) return res.status(400).json({ error: "Parametri incompleti" });
+    
+    const snapshot = await db.collection("schedule").where("movieId", "==", movieId).get();
+
+    if (snapshot.empty) return res.status(404).json({ error: "Programul filmului nu a fost gasit" });
+    
+    let entryFound = false;
+
+    for (const doc of snapshot.docs) {
+      const data = doc.data();
+      const schedule = data.schedule;
+
+      if (schedule[city] && schedule[city][date]) {
+        const showIndex = schedule[city][date].findIndex(show => show.time === time);
+      
+        if (showIndex !== -1) {
+          const show = schedule[city][date][showIndex];
+
+          const conflict = selectedSeats.some(seat => !show.freeSeats.includes(seat)); // verificam daca toate locurile selectate sunt inca libere
+         
+          if (conflict) return res.status(409).json({ error: "Unele locuri au fost rezervate deja. Va rugam sa selectati din nou" });
+          
+          show.freeSeats = show.freeSeats.filter(seat => !selectedSeats.includes(seat));
+          show.occupiedSeats = Array.from(new Set([...show.occupiedSeats, ...selectedSeats]));
+
+          schedule[city][date][showIndex] = show;
+          await db.collection("schedule").doc(doc.id).update({ schedule });
+       
+          entryFound = true;
+          break;
+        }
+      }
+    }
+
+    if (!entryFound) return res.status(404).json({ error: "Nu a fost gasit programul pentru parametrii specificati" });
+  
+    res.json({ message: "Locurile au fost actualizate cu succes" });
+
+  } catch (error) {
+    console.error("Eroare la actualizarea locurilor:", error);
+    res.status(500).json({ error: "Eroare la actualizarea locurilor" });
+  }
+});
+
 module.exports = router;

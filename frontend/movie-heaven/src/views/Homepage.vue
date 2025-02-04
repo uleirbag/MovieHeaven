@@ -59,7 +59,7 @@
     export default {
       setup() {
         const services = ref([
-          { title: 'Rezervare rapidă', description: 'Obține biletele cât ai zice motor... acțiune!' },
+          { title: 'Rezervare rapidă', description: 'Sări peste cozi și asigură-ți biletele cât ai zice motor... acțiune!' },
           { title: 'Cinema bar', description: 'Cel mai bun Popcorn și o gamă extinsă de gustări și băuturi răcoritoare' },
           { title: 'Prețuri accesibile', description: 'Orice bilet la film - doar 20 de lei (Standard/3D/IMAX)' },
         ]);

@@ -151,6 +151,31 @@ const confirmReservation = async () => {
     userEmail
   };
 
+  // Pasul 1 - incercam sa actualizam locurile libere -> ocupate pentru a evita conflictele
+  try {
+    const putResponse = await fetch(`http://localhost:5000/api/schedule/updateSeats/${movie.value.id}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        city: reservationData.value.location,
+        date: reservationData.value.date,
+        time: reservationData.value.time,
+        selectedSeats: reservationData.value.selectedSeats
+      })
+    });
+    if (!putResponse.ok) {
+      const errorData = await putResponse.json();
+      throw new Error(errorData.error || "Cineva a cumparat deja aceste bilete, va rugam incercati din nou");
+    }
+
+  } catch (e) {
+    console.error("Eroare la confirmarea rezervarii:", e);
+    errorMessage.value = e.message || "Eroare la confirmarea rezervarii";
+  }
+
+  // Pasul 2 - confirmam rezervarea si o scriem in colectia Firestore
   try {
     const response = await fetch("http://localhost:5000/api/tickets", {
       method: "POST",
